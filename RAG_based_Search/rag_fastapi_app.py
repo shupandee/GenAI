@@ -30,7 +30,7 @@ from langchain_core.runnables import RunnablePassthrough
 # --- Environment Setup (Executed once on server startup) ---
 # Set your Google API key directly here for now.
 # NOTE: It's recommended to use environment variables in a production setting.
-GOOGLE_API_KEY = "AIzaSyDLt3dMcH1iPQhmjRP4xn9NvyXM7N_SzoI"
+GOOGLE_API_KEY = "API_HERE"
 
 def setup_environment():
     """
