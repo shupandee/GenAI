@@ -73,8 +73,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # --- Environment Setup ---
-GOOGLE_API_KEY = "AIzaSyDLt3dMcH1iPQhmjRP4xn9NvyXM7N_SzoI"
-COHERE_API_KEY = "zJXW9qFwji8h9unSC1P0ebVjekbqdvSNKvNbOnwv"
+GOOGLE_API_KEY = "API_here"
+COHERE_API_KEY = "Api_here"
 
 def setup_environment():
     """Sets up the environment by loading API keys."""
