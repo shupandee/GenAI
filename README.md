@@ -1,3 +1,13 @@
+# <p align="center"> 
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=28&pause=1000&color=1E90FF&center=true&vCenter=true&width=700&lines=Hi%2C+I'm+Deepanshu+👋;Machine+Learning+Engineer+in+the+Making;AI+%26+Data+Science+Enthusiast;Transforming+Data+into+Intelligent+Solutions" alt="Typing SVG" /> 
+</p>
+
+<p align="center">
+  <img src="https://komarev.com/ghpvc/?username=shupandee&label=Profile+Views&color=1E90FF&style=for-the-badge" alt="Profile Views"/>
+</p>
+
+---
+
 # 👋 Hi, I’m Deepanshu Gautam  
 
 🎓 **B.Tech Student (DS & AI) at IIIT Ranchi**  
@@ -9,20 +19,19 @@
 ## 🔹 About Me  
 - 🌱 Currently exploring **NLP, Retrieval-Augmented Generation (RAG), and Generative AI**  
 - 🧑‍💻 Hands-on experience with **Deep Learning, LSTMs, CNNs, Neural Style Transfer**  
-- 🔗 Love working with frameworks like **PyTorch, TensorFlow, LangChain, Langraph, and FastAPI**  
+- 🔗 Love working with frameworks like **PyTorch, TensorFlow, LangChain, LangGraph, LangSmith, and FastAPI**  
 - 🎯 Goal: Leverage AI/ML to solve **real-world challenges** and build impactful products  
 
 ---
 
 ## 🔹 Key Projects  
 - 📈 **Stock Price Prediction (LSTM):** Built a time-series model with strong predictive accuracy  
-- 📑 **Retrieval-Augmented Generation System:** Deployed with **LangChain + Langraph + FastAPI**, boosting document QA efficiency  
+- 📑 **Retrieval-Augmented Generation System:** Deployed with **LangChain + LangGraph + FastAPI**, boosting document QA efficiency  
 - 🎨 **Neural Style Transfer (CNNs):** Implemented with **PyTorch + VGG19** for artistic image generation  
 
 ---
 
 ## 🔹 Skills & Tools  
-
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)  
 ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)  
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)  
@@ -31,7 +40,8 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)  
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)  
 ![LangChain](https://img.shields.io/badge/LangChain-1E90FF?style=for-the-badge&logo=chainlink&logoColor=white)  
-![Langraph](https://img.shields.io/badge/Langraph-8A2BE2?style=for-the-badge&logo=graphql&logoColor=white)  
+![LangGraph](https://img.shields.io/badge/LangGraph-8A2BE2?style=for-the-badge&logo=graphql&logoColor=white)  
+![LangSmith](https://img.shields.io/badge/LangSmith-FF69B4?style=for-the-badge&logo=protocols&logoColor=white)  
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)  
 ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)  
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)  
@@ -59,6 +69,14 @@
 <p align="center">
   <img src="https://github-readme-streak-stats.herokuapp.com?user=shupandee&theme=radical&hide_border=false" alt="GitHub Streak"/>
 </p>  
+
+---
+
+## 🔹 Contribution Graph Animation  
+
+<p align="center">
+  <img src="https://github.com/shupandee/shupandee/blob/output/github-contribution-grid-snake.svg" alt="snake animation"/>
+</p>
 
 ---
 
