@@ -96,7 +96,8 @@ This is the **FastAPI backend** implementing the enhanced Retrieval-Augmented Ge
           │ - Scores, Metrics     │
           │ - Confidence levels   │
           └──────────┴────────────┘
----
+
+```
 
 ## 2️⃣ Client: `postv2.py`
 📖 **Description:**  
@@ -110,6 +111,7 @@ This is a **Python client script** that sends a PDF and related questions to the
 - Pretty-prints answers  
 
 **Workflow:**
+```plaintext
           ┌───────────────────────┐
           │   API Configuration   │
           │ (API_URL, headers)    │
@@ -139,7 +141,7 @@ This is a **Python client script** that sends a PDF and related questions to the
           │   answers             │
           └──────────┴────────────┘
 
----
+```
 
 ## 🚀 Getting Started  
 
