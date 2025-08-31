@@ -40,6 +40,7 @@ This is the **FastAPI backend** implementing the enhanced Retrieval-Augmented Ge
 - Logging & monitoring with relevance scores and confidence levels  
 
 **Workflow:**
+```plaintext
           ┌───────────────────────┐
           │   Environment Setup   │
           │ (API keys, Logging)   │
@@ -95,7 +96,6 @@ This is the **FastAPI backend** implementing the enhanced Retrieval-Augmented Ge
           │ - Scores, Metrics     │
           │ - Confidence levels   │
           └──────────┴────────────┘
-
 ---
 
 ## 2️⃣ Client: `postv2.py`
