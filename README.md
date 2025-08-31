@@ -72,14 +72,6 @@
 
 ---
 
-## 🔹 Contribution Graph Animation  
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/shupandee/shupandee/output/github-contribution-grid-snake.svg" alt="snake animation"/>
-</p>
-
----
-
 ## 🔹 Let’s Connect!  
 - 🌐 [LinkedIn](https://www.linkedin.com/in/deepanshu-gautam-075b4728b)  
 - 💻 [GitHub](https://github.com/shupandee/GenAI)  
