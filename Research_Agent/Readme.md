@@ -2,7 +2,7 @@
 
 A powerful research assistant built with **LangChain**, **LangGraph**, **Groq**, and **Tavily** that conducts comprehensive research on any topic using AI-powered web search and analysis.
 
-![AI Research Assistant Interface](https://github.com/yourusername/ai-research-assistant/blob/main/docs/images/screenshot.png)
+![AI Research Assistant Interface](https://github.com/shupandee/GenAI/blob/main/Research_Agent/WhatsApp%20Image%202025-09-16%20at%2023.31.20_9bf891d0.jpg)
 
 *The intuitive dark-themed interface showing a research query about "blackhole" with structured workflow and results display.*
 
