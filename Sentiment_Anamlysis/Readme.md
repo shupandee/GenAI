@@ -373,7 +373,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For support, please open an issue on GitHub or contact [your-email@example.com](shupandee@gmail.com).
+For support, please open an issue on GitHub or contact [shupandee@gmail.com](shupandee@gmail.com).
 
 ## 🔗 Related Projects
 
