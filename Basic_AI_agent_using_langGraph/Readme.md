@@ -184,8 +184,8 @@ The system supports multiple evaluation approaches:
 ### Model Options
 
 **Gemini Models** (for LLM):
-- `gemini-1.5-flash` (default, fast)
-- `gemini-1.5-pro` (more capable)
+- `gemini-2.5-flash` (default, fast)
+- `gemini-2.5-pro` (more capable)
 - `gemini-pro` (legacy)
 
 **Embedding Models** (HuggingFace):
