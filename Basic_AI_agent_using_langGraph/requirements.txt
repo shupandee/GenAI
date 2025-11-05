@@ -1,0 +1,45 @@
+# Core LangChain and LangGraph
+langchain==0.3.1
+langchain-community==0.3.1
+langchain-core==0.3.6
+langgraph==0.2.27
+
+# Hugging Face Integration
+langchain-huggingface==0.1.0
+huggingface-hub==0.25.1
+sentence-transformers==3.1.1
+transformers==4.45.2
+
+# Vector Database
+chromadb==0.5.11
+chroma-hnswlib==0.7.6
+
+# Document Loading
+pypdf==5.0.1
+unstructured==0.16.2
+
+# Embeddings and Model Support
+torch==2.5.1
+einops==0.8.0
+
+# Evaluation Metrics
+bert-score==0.3.13
+rouge-score==0.1.2
+nltk==3.9.1
+
+# UI Framework
+streamlit==1.39.0
+
+# Data Processing
+pandas==2.2.3
+numpy==1.26.4
+
+# Utilities
+python-dotenv==1.0.1
+tqdm==4.66.5
+
+# Optional: LangSmith for tracing
+# langsmith==0.1.137
+
+# Optional: TruLens for evaluation
+# trulens-eval==1.0.1
