@@ -245,7 +245,7 @@ The video demonstrates:
 
 ### Screenshot
 
-![Chat Server Demo](server.png)
+![Chat Server Demo](server_chat.png)
 
 *Three terminals showing the server and two clients (Deepanshu and Ansh) chatting in real-time, demonstrating public messages, private messages, and the WHO command.*
 
