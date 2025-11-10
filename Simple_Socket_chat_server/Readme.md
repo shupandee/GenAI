@@ -228,7 +228,9 @@ The server handles various error conditions:
 - User-friendly command interface
 - Graceful shutdown on quit or Ctrl+C
 
-## Screen Recording
+## Demo
+
+### Screen Recording
 
 🎥 **Demo Video:** [Watch on Google Drive](https://drive.google.com/file/d/1R4Qll3tvBidwsxVv82WcCzINlugiZwfr/view?usp=sharing)
 
@@ -240,6 +242,12 @@ The video demonstrates:
 - User list command (WHO)
 - User disconnection notifications
 - Idle timeout functionality
+
+### Screenshot
+
+![Chat Server Demo](server.png)
+
+*Three terminals showing the server and two clients (Deepanshu and Ansh) chatting in real-time, demonstrating public messages, private messages, and the WHO command.*
 
 ## Testing
 
@@ -302,11 +310,11 @@ This project is created for educational purposes.
 
 ## Author
 
-**Naman** - Backend Assignment
+**Deepanshu Gautam** - Backend Assignment
 
 ## Contact
 
-For questions or issues, please contact [your-email@example.com]
+For questions or issues, please contact [shupandee@gmail.com]
 
 ---
 
