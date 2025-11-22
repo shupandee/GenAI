@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communication Skills Scorer - Nirmaan AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .input-section textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .input-section textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .score-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .overall-score {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 60px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .overall-score .score-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .overall-score .score-value {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        .overall-score .score-max {
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: #f8f9fa;
+            padding: 15px 25px;
+            border-radius: 10px;
+        }
+
+        .meta-item .label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .meta-item .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .criteria-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .criterion-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .criterion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .criterion-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .criterion-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 1s ease-out;
+        }
+
+        .criterion-details {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .criterion-details .detail-item {
+            margin-bottom: 8px;
+        }
+
+        .criterion-details .detail-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .error-message {
+            display: none;
+            background: #fee;
+            border: 2px solid #fcc;
+            color: #c33;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        .sample-text {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .sample-text .label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .sample-text .text {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .main-card {
+                padding: 20px;
+            }
+
+            .overall-score .score-value {
+                font-size: 3rem;
+            }
+
+            .criteria-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .api-config {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .api-config label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .api-config input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        .status-indicator.connected {
+            background: #4caf50;
+            box-shadow: 0 0 5px #4caf50;
+        }
+
+        .status-indicator.disconnected {
+            background: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎤 Communication Skills Scorer</h1>
+            <p>AI-Powered Speech Analysis Tool by Nirmaan AI</p>
+        </div>
+
+        <div class="main-card">
+            <!-- API Configuration -->
+            <div class="api-config">
+                <label for="apiUrl">
+                    API Server URL 
+                    <span class="status-indicator" id="statusIndicator"></span>
+                </label>
+                <input type="text" id="apiUrl" value="http://localhost:5000" placeholder="http://localhost:5000">
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage"></div>
+
+            <!-- Sample Text -->
+            <div class="sample-text">
+                <div class="label">📝 Sample Transcript (Click "Load Sample" to use)</div>
+                <div class="text">
+                    Hello everyone, myself Muskan, studying in class 8th B section from Christ Public School. 
+                    I am 13 years old. I live with my family. There are 3 people in my family, me, my mother and my father.
+                    One special thing about my family is that they are very kind hearted to everyone and soft spoken...
+                </div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <label for="transcriptInput">Enter Student Transcript</label>
+                <textarea 
+                    id="transcriptInput" 
+                    placeholder="Paste the student's self-introduction transcript here...&#10;&#10;Example:&#10;Hello everyone, my name is John. I am 14 years old and studying in class 9th..."
+                ></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="button-group">
+                <button class="btn btn-primary" id="scoreBtn">
+                    <span>🎯</span>
+                    <span>Score Transcript</span>
+                </button>
+                <button class="btn btn-secondary" id="loadSampleBtn">
+                    <span>📄</span>
+                    <span>Load Sample</span>
+                </button>
+                <button class="btn btn-secondary" id="clearBtn">
+                    <span>🗑️</span>
+                    <span>Clear</span>
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing transcript with AI models...</p>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">This may take 5-10 seconds</p>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results" id="results">
+                <div class="score-header">
+                    <div class="overall-score">
+                        <div class="score-label">Overall Score</div>
+                        <div>
+                            <span class="score-value" id="overallScore">0</span>
+                            <span class="score-max">/100</span>
+                        </div>
+                    </div>
+                    
+                    <div class="meta-info">
+                        <div class="meta-item">
+                            <div class="label">Words</div>
+                            <div class="value" id="wordCount">0</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="label">Sentences</div>
+                            <div class="value" id="sentenceCount">0</div>
+                        </div>
+                        <div class="meta-item">
+                            <div class="label">Duration</div>
+                            <div class="value"><span id="duration">0</span>s</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="criteria-grid" id="criteriaGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample transcript
+        const sampleTranscript = `Hello everyone, myself Muskan, studying in class 8th B section from Christ Public School. 
+I am 13 years old. I live with my family. There are 3 people in my family, me, my mother and my father.
+One special thing about my family is that they are very kind hearted to everyone and soft spoken. One thing I really enjoy is play, playing cricket and taking wickets.
+A fun fact about me is that I see in mirror and talk by myself. One thing people don't know about me is that I once stole a toy from one of my cousin.
+My favorite subject is science because it is very interesting. Through science I can explore the whole world and make the discoveries and improve the lives of others. 
+Thank you for listening.`;
+
+        // DOM elements
+        const transcriptInput = document.getElementById('transcriptInput');
+        const scoreBtn = document.getElementById('scoreBtn');
+        const loadSampleBtn = document.getElementById('loadSampleBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const errorMessage = document.getElementById('errorMessage');
+        const apiUrlInput = document.getElementById('apiUrl');
+        const statusIndicator = document.getElementById('statusIndicator');
+
+        // Check API health on load
+        checkAPIHealth();
+
+        // Event listeners
+        scoreBtn.addEventListener('click', scoreTranscript);
+        loadSampleBtn.addEventListener('click', loadSample);
+        clearBtn.addEventListener('click', clearAll);
+        apiUrlInput.addEventListener('change', checkAPIHealth);
+
+        function loadSample() {
+            transcriptInput.value = sampleTranscript;
+            hideError();
+        }
+
+        function clearAll() {
+            transcriptInput.value = '';
+            results.classList.remove('active');
+            hideError();
+        }
+
+        async function checkAPIHealth() {
+            const apiUrl = apiUrlInput.value.trim();
+            try {
+                const response = await fetch(`${apiUrl}/api/health`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    statusIndicator.classList.add('connected');
+                    statusIndicator.classList.remove('disconnected');
+                } else {
+                    statusIndicator.classList.remove('connected');
+                    statusIndicator.classList.add('disconnected');
+                }
+            } catch (error) {
+                statusIndicator.classList.remove('connected');
+                statusIndicator.classList.add('disconnected');
+            }
+        }
+
+        async function scoreTranscript() {
+            const transcript = transcriptInput.value.trim();
+            const apiUrl = apiUrlInput.value.trim();
+
+            // Validation
+            if (!transcript) {
+                showError('Please enter a transcript to score.');
+                return;
+            }
+
+            if (transcript.split(' ').length < 20) {
+                showError('Transcript is too short. Please enter at least 20 words.');
+                return;
+            }
+
+            // Show loading
+            hideError();
+            results.classList.remove('active');
+            loading.classList.add('active');
+            scoreBtn.disabled = true;
+
+            try {
+                const response = await fetch(`${apiUrl}/api/score`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ transcript: transcript })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                displayResults(data);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showError(`Failed to score transcript: ${error.message}. Make sure the API server is running at ${apiUrl}`);
+            } finally {
+                loading.classList.remove('active');
+                scoreBtn.disabled = false;
+            }
+        }
+
+        function displayResults(data) {
+            // Overall score
+            document.getElementById('overallScore').textContent = Math.round(data.overall_score);
+            document.getElementById('wordCount').textContent = data.words;
+            document.getElementById('sentenceCount').textContent = data.sentences;
+            document.getElementById('duration').textContent = data.duration_seconds;
+
+            // Criteria grid
+            const criteriaGrid = document.getElementById('criteriaGrid');
+            criteriaGrid.innerHTML = '';
+
+            data.criteria.forEach(criterion => {
+                const card = createCriterionCard(criterion);
+                criteriaGrid.appendChild(card);
+            });
+
+            // Show results with animation
+            results.classList.add('active');
+            results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Animate progress bars
+            setTimeout(() => {
+                document.querySelectorAll('.progress-fill').forEach(bar => {
+                    const width = bar.getAttribute('data-width');
+                    bar.style.width = width + '%';
+                });
+            }, 100);
+        }
+
+        function createCriterionCard(criterion) {
+            const card = document.createElement('div');
+            card.className = 'criterion-card';
+
+            const percentage = (criterion.weighted_score / criterion.weight) * 100;
+
+            // Extract key details
+            const details = extractDetails(criterion);
+
+            card.innerHTML = `
+                <div class="criterion-header">
+                    <div class="criterion-name">${criterion.criterion}</div>
+                    <div class="criterion-score">${Math.round(criterion.weighted_score)}/${criterion.weight}</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" data-width="${percentage}" style="width: 0%"></div>
+                </div>
+                <div class="criterion-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Raw Score:</span> ${criterion.score.toFixed(1)}/${criterion.max_score}
+                    </div>
+                    ${details}
+                </div>
+            `;
+
+            return card;
+        }
+
+        function extractDetails(criterion) {
+            const details = criterion.details;
+            let html = '';
+
+            // Content & Structure
+            if (details.salutation) {
+                html += `<div class="detail-item"><span class="detail-label">Salutation:</span> ${details.salutation.level}</div>`;
+            }
+            if (details.keywords) {
+                html += `<div class="detail-item"><span class="detail-label">Key Elements:</span> ${details.keywords.required_count}/${details.keywords.total_required} found</div>`;
+            }
+            if (details.flow) {
+                const flowChecks = [
+                    details.flow.has_greeting ? '✓ Greeting' : '✗ Greeting',
+                    details.flow.has_name ? '✓ Name' : '✗ Name',
+                    details.flow.has_closing ? '✓ Closing' : '✗ Closing'
+                ].join(', ');
+                html += `<div class="detail-item"><span class="detail-label">Flow:</span> ${flowChecks}</div>`;
+            }
+
+            // Speech Rate
+            if (details.wpm !== undefined) {
+                html += `<div class="detail-item"><span class="detail-label">WPM:</span> ${Math.round(details.wpm)} (${details.rating})</div>`;
+                html += `<div class="detail-item">${details.feedback}</div>`;
+            }
+
+            // Grammar
+            if (details.grammar) {
+                html += `<div class="detail-item"><span class="detail-label">Grammar Errors:</span> ${details.grammar.errors_count} (${details.grammar.errors_per_100.toFixed(1)} per 100 words)</div>`;
+            }
+            if (details.vocabulary) {
+                html += `<div class="detail-item"><span class="detail-label">Vocabulary (TTR):</span> ${details.vocabulary.ttr.toFixed(3)}</div>`;
+            }
+
+            // Clarity
+            if (details.filler_rate !== undefined) {
+                html += `<div class="detail-item"><span class="detail-label">Filler Words:</span> ${details.filler_count} (${details.filler_rate.toFixed(1)}%)</div>`;
+                html += `<div class="detail-item">${details.feedback}</div>`;
+            }
+
+            // Engagement
+            if (details.sentiment_score !== undefined) {
+                html += `<div class="detail-item"><span class="detail-label">Sentiment Score:</span> ${details.sentiment_score.toFixed(3)}</div>`;
+                html += `<div class="detail-item">${details.interpretation}</div>`;
+            }
+
+            return html;
+        }
+
+        function showError(message) {
+            errorMessage.textContent = '❌ ' + message;
+            errorMessage.classList.add('active');
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
