@@ -1,0 +1,44 @@
+# ============================================================================
+# LLM Evaluation Pipeline - Dependencies
+# ============================================================================
+# Installation: pip install -r requirements.txt
+# Python Version: 3.8+
+# ============================================================================
+
+# Core Dependencies
+# ----------------------------------------------------------------------------
+
+# Async HTTP client for making API calls to Gemini
+# Used in: utils/gemini_client.py
+aiohttp==3.9.1
+
+# Environment variable management (.env file support)
+# Used in: All modules for API key management
+python-dotenv==1.0.0
+
+
+# Optional Dependencies (Recommended)
+# ----------------------------------------------------------------------------
+
+# Progress bars for batch processing (useful for large-scale evaluation)
+# Uncomment if you want visual progress indicators
+# tqdm==4.66.1
+
+# Async support (included in Python 3.7+, but explicit for clarity)
+# asyncio==3.4.3
+
+
+# Development Dependencies (Optional)
+# ----------------------------------------------------------------------------
+
+# Code formatting
+# black==23.12.1
+
+# Linting
+# pylint==3.0.3
+# flake8==7.0.0
+
+# Type checking
+# mypy==1.8.0
+
+

@@ -1,0 +1,42 @@
+{
+  "overall_score": 7.3,
+  "evaluation_time_ms": 6829.26,
+  "metrics": {
+    "relevance": {
+      "score": 8.5,
+      "reasoning": "The AI response directly addresses both parts of the query by listing specific accommodation options (Gopal Mansion, clinic's own rooms, Happy Home Hotel) and their corresponding costs. It also provides some proximity information. The information is actionable and relevant.",
+      "completeness": "partial",
+      "missing_aspects": [
+        "A broader range of accommodation options beyond the three listed (e.g., other hotels, guesthouses, serviced apartments in the area).",
+        "Information on how to book the external accommodations (Gopal Mansion, Happy Home Hotel)."
+      ]
+    },
+    "hallucination": {
+      "score": 5.0,
+      "reasoning": "The AI response accurately states the room price for Gopal Mansion and the details for Happy Home Hotel, which are directly supported by the sources. However, it fabricates information about the clinic offering subsidized rooms with specific prices and breakfast, and also invents a method for booking a consultation call with Dr. Malpani, none of which are present in the provided source documents.",
+      "grounded": "partially",
+      "issues": [
+        "The AI invents services and pricing not mentioned in the sources (clinic-offered rooms).",
+        "The AI invents a specific method for booking a consultation call."
+      ],
+      "unsupported_claims": [
+        "We also offer specially subsidized air-conditioned rooms at our clinic for Rs 2000 (US $50) per night, and non-AC rooms for Rs 1500 (US$ 40) per night, including free breakfast.",
+        "To discuss your specific needs and coordinate your visit, you can book a consultation call with Dr. Malpani."
+      ]
+    },
+    "performance": {
+      "score": 9.5,
+      "latency_ms": 500.0,
+      "latency_score": 9.0,
+      "estimated_tokens": 111,
+      "estimated_cost_usd": 1.7e-05,
+      "cost_score": 10.0,
+      "reasoning": "Excellent latency, cost-efficient"
+    }
+  },
+  "metadata": {
+    "user_query": "What are the accommodation options and costs near Malpani Infertility Clinic?",
+    "ai_response": "For Gopal Mansion, an air-conditioned room with TV and bath is Rs 800 per night. We also offer specially subsidized air-conditioned rooms at our clinic for Rs 2000 (US $50) per night, and non-AC rooms...",
+    "num_sources": 10
+  }
+}
