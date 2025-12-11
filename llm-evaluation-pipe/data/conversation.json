@@ -1,0 +1,14 @@
+[
+  {
+    "id": "msg_001",
+    "sender": "user",
+    "message": "What are the accommodation options and costs near Malpani Infertility Clinic?",
+    "timestamp": "2024-12-11T10:00:00Z"
+  },
+  {
+    "id": "msg_002",
+    "sender": "bot",
+    "message": "For Gopal Mansion, an air-conditioned room with TV and bath is Rs 800 per night. We also offer specially subsidized air-conditioned rooms at our clinic for Rs 2000 (US $50) per night, and non-AC rooms for Rs 1500 (US$ 40) per night, including free breakfast. Happy Home Hotel, which is a 5-minute walk from our clinic, offers single rooms for Rs 1400 and double rooms for Rs 2000. To discuss your specific needs and coordinate your visit, you can book a consultation call with Dr. Malpani.",
+    "timestamp": "2024-12-11T10:00:02Z"
+  }
+]
