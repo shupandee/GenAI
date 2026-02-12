@@ -1,0 +1,36 @@
+2026-02-12 14:30:22 - trading_bot - INFO - Logging initialized. Log file: logs/trading_bot_20260212_143022.log
+2026-02-12 14:30:22 - trading_bot.client - INFO - Binance Futures Testnet client initialized
+2026-02-12 14:30:22 - trading_bot.client - INFO - Testing API connectivity...
+2026-02-12 14:30:22 - trading_bot.client - DEBUG - API Request: GET /fapi/v1/ping
+2026-02-12 14:30:22 - trading_bot.client - DEBUG - Parameters: {}
+2026-02-12 14:30:23 - trading_bot.client - DEBUG - API Response Status: 200
+2026-02-12 14:30:23 - trading_bot.client - DEBUG - API Response: {}
+2026-02-12 14:30:23 - trading_bot.orders - INFO - OrderManager initialized
+2026-02-12 14:30:23 - trading_bot.orders - INFO - ================================================================================
+2026-02-12 14:30:23 - trading_bot.orders - INFO - ORDER REQUEST SUMMARY
+2026-02-12 14:30:23 - trading_bot.orders - INFO - ================================================================================
+2026-02-12 14:30:23 - trading_bot.orders - INFO - Symbol:       BTCUSDT
+2026-02-12 14:30:23 - trading_bot.orders - INFO - Side:         BUY
+2026-02-12 14:30:23 - trading_bot.orders - INFO - Order Type:   MARKET
+2026-02-12 14:30:23 - trading_bot.orders - INFO - Quantity:     0.001
+2026-02-12 14:30:23 - trading_bot.orders - INFO - ================================================================================
+2026-02-12 14:30:23 - trading_bot.orders - INFO - Placing MARKET order...
+2026-02-12 14:30:23 - trading_bot.client - DEBUG - API Request: POST /fapi/v1/order
+2026-02-12 14:30:23 - trading_bot.client - DEBUG - Parameters: {'symbol': 'BTCUSDT', 'side': 'BUY', 'type': 'MARKET', 'quantity': 0.001, 'timestamp': 1707749423000, 'signature': '8a7b9c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6'}
+2026-02-12 14:30:24 - trading_bot.client - DEBUG - API Response Status: 200
+2026-02-12 14:30:24 - trading_bot.client - DEBUG - API Response: {"orderId": 12345678, "symbol": "BTCUSDT", "status": "FILLED", "clientOrderId": "abc123xyz", "price": "0", "avgPrice": "48523.50", "origQty": "0.001", "executedQty": "0.001", "cumQuote": "48.52350", "timeInForce": "GTC", "type": "MARKET", "reduceOnly": false, "closePosition": false, "side": "BUY", "positionSide": "BOTH", "stopPrice": "0", "workingType": "CONTRACT_PRICE", "priceProtect": false, "origType": "MARKET", "updateTime": 1707749424000}
+2026-02-12 14:30:24 - trading_bot.orders - INFO - ================================================================================
+2026-02-12 14:30:24 - trading_bot.orders - INFO - ORDER RESPONSE
+2026-02-12 14:30:24 - trading_bot.orders - INFO - ================================================================================
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Order ID:      12345678
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Client Order ID: abc123xyz
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Status:        FILLED
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Symbol:        BTCUSDT
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Side:          BUY
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Type:          MARKET
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Original Qty:  0.001
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Executed Qty:  0.001
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Avg Price:     48523.50
+2026-02-12 14:30:24 - trading_bot.orders - INFO - Update Time:   1707749424000
+2026-02-12 14:30:24 - trading_bot.orders - INFO - ================================================================================
+2026-02-12 14:30:24 - trading_bot.orders - INFO - ✅ Order placed successfully! Order ID: 12345678
