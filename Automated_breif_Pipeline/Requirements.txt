@@ -1,0 +1,10 @@
+flask>=3.0.0
+# google-generativeai  # optional: use pip install google-generativeai for SDK support
+# Alternative: app.py uses direct HTTP calls to Gemini API (no SDK needed)
+# Just set GEMINI_API_KEY env var and it works
+
+# Optional integrations for production:
+# notion-client       # Notion API
+# slack-sdk           # Slack notifications
+# airtable-python-wrapper  # Airtable sync
+# google-api-python-client  # Google Sheets/Forms

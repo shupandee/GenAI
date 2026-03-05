@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrollhouse — Brief Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0a0a0a;
+  --off-black: #111214;
+  --panel: #16181c;
+  --border: #232529;
+  --border-light: #2e3035;
+  --accent: #e8ff47;
+  --accent-dim: #b8cc2a;
+  --accent-bg: rgba(232,255,71,0.06);
+  --red: #ff4d4d;
+  --green: #47ff8a;
+  --blue: #47b3ff;
+  --orange: #ff9447;
+  --text-1: #f0f0f0;
+  --text-2: #9a9da6;
+  --text-3: #5a5d66;
+  --radius: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--black);
+  color: var(--text-1);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px;
+}
+.nav-brand {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 18px; letter-spacing: -0.3px;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-dot {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+.nav-tabs { display: flex; gap: 2px; }
+.nav-tab {
+  padding: 6px 16px; border-radius: 6px;
+  font-size: 13px; font-weight: 500; color: var(--text-2);
+  cursor: pointer; transition: all 0.2s; border: none;
+  background: transparent; font-family: inherit;
+}
+.nav-tab:hover { color: var(--text-1); background: var(--panel); }
+.nav-tab.active { color: var(--accent); background: var(--accent-bg); }
+.nav-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--text-3);
+  display: flex; align-items: center; gap: 6px;
+}
+.status-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.status-dot.live { background: var(--green); }
+.status-dot.demo { background: var(--orange); }
+
+/* ── LAYOUT ── */
+.page { display: none; }
+.page.active { display: block; }
+
+.container { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+/* ── HERO / DASHBOARD ── */
+.hero {
+  padding: 60px 0 40px;
+  border-bottom: 1px solid var(--border);
+}
+.hero-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+}
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(32px, 5vw, 54px); font-weight: 800;
+  line-height: 1.05; letter-spacing: -1px;
+  color: var(--text-1); margin-bottom: 16px;
+}
+.hero-title span { color: var(--accent); }
+.hero-sub { font-size: 16px; color: var(--text-2); max-width: 560px; line-height: 1.6; }
+
+.stats-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px; margin: 36px 0;
+}
+.stat-card {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  transition: border-color 0.2s;
+}
+.stat-card:hover { border-color: var(--border-light); }
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 32px; font-weight: 800; line-height: 1;
+  color: var(--accent); margin-bottom: 6px;
+}
+.stat-label { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+.stat-sub { font-size: 11px; color: var(--text-3); margin-top: 4px; font-family: 'DM Mono', monospace; }
+
+/* ── PIPELINE DIAGRAM ── */
+.pipeline-viz {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px 32px; margin: 24px 0;
+  overflow: hidden;
+}
+.pipeline-viz-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--text-3); margin-bottom: 20px;
+}
+.pipeline-steps {
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; padding-bottom: 4px;
+}
+.pipe-step {
+  display: flex; align-items: center; gap: 0; flex-shrink: 0;
+}
+.pipe-node {
+  background: var(--off-black); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 18px; text-align: center;
+  min-width: 130px; transition: all 0.3s;
+}
+.pipe-node.highlight {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.pipe-node.ai-node {
+  border-color: var(--blue);
+  background: rgba(71,179,255,0.06);
+}
+.pipe-icon { font-size: 20px; margin-bottom: 6px; }
+.pipe-label { font-size: 11px; font-weight: 600; color: var(--text-1); }
+.pipe-sub { font-size: 10px; color: var(--text-3); margin-top: 2px; font-family: 'DM Mono', monospace; }
+.pipe-arrow {
+  padding: 0 8px; color: var(--text-3); font-size: 16px; flex-shrink: 0;
+}
+.pipe-tag {
+  font-size: 9px; font-family: 'DM Mono', monospace;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 2px 6px; border-radius: 4px; margin-top: 4px;
+  display: inline-block;
+}
+.tag-ai { background: rgba(71,179,255,0.15); color: var(--blue); }
+.tag-auto { background: var(--accent-bg); color: var(--accent); }
+.tag-human { background: rgba(255,148,71,0.15); color: var(--orange); }
+
+/* ── SECTION ── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 32px 0 20px;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px; font-weight: 700;
+}
+.section-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--text-3);
+}
+
+/* ── BUTTON ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 7px; font-size: 13px;
+  font-weight: 600; font-family: inherit; cursor: pointer;
+  transition: all 0.2s; border: 1px solid transparent;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--accent); color: var(--black);
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: var(--accent-dim); }
+.btn-ghost {
+  background: transparent; color: var(--text-2);
+  border-color: var(--border);
+}
+.btn-ghost:hover { background: var(--panel); color: var(--text-1); }
+.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+.btn-danger {
+  background: rgba(255,77,77,0.1); color: var(--red);
+  border-color: rgba(255,77,77,0.2);
+}
+.btn-danger:hover { background: rgba(255,77,77,0.2); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── FORM ── */
+.form-wrap {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.form-header {
+  padding: 24px 28px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.form-header-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+.form-header-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.form-body { padding: 28px; }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+@media (max-width: 700px) {
+  .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
+}
+.form-full { grid-column: 1 / -1; }
+
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field label {
+  font-size: 12px; font-weight: 600; color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.field input, .field textarea, .field select {
+  background: var(--off-black); border: 1px solid var(--border);
+  border-radius: 7px; padding: 11px 14px;
+  font-size: 14px; color: var(--text-1); font-family: inherit;
+  transition: border-color 0.2s; outline: none; width: 100%;
+  resize: vertical;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(232,255,71,0.08);
+}
+.field textarea { min-height: 80px; }
+.field select option { background: var(--off-black); }
+
+.form-footer {
+  padding: 20px 28px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.form-footer-hint { font-size: 12px; color: var(--text-3); font-family: 'DM Mono', monospace; }
+
+/* ── PROGRESS / LOADING ── */
+.pipeline-progress {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px 28px; margin-top: 20px;
+  display: none;
+}
+.pipeline-progress.active { display: block; }
+.progress-title {
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
+  margin-bottom: 24px;
+}
+.progress-steps { display: flex; flex-direction: column; gap: 12px; }
+.progress-step {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; border-radius: 8px;
+  background: var(--off-black); border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.progress-step.active { border-color: var(--accent); background: var(--accent-bg); }
+.progress-step.done { border-color: rgba(71,255,138,0.3); background: rgba(71,255,138,0.04); }
+.progress-step.error { border-color: rgba(255,77,77,0.3); background: rgba(255,77,77,0.04); }
+.step-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
+.step-text { flex: 1; }
+.step-name { font-size: 14px; font-weight: 500; }
+.step-desc { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.step-badge {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  padding: 3px 8px; border-radius: 4px;
+  background: var(--border); color: var(--text-2);
+}
+.step-badge.running { background: rgba(232,255,71,0.15); color: var(--accent); }
+.step-badge.done { background: rgba(71,255,138,0.15); color: var(--green); }
+.step-badge.error { background: rgba(255,77,77,0.15); color: var(--red); }
+
+/* ── RESULTS ── */
+.result-panel {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; margin-top: 20px;
+  display: none;
+}
+.result-panel.active { display: block; }
+.result-tabs {
+  display: flex; border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.result-tab {
+  padding: 14px 22px; font-size: 13px; font-weight: 500;
+  color: var(--text-2); cursor: pointer; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all 0.2s;
+  background: transparent; border-top: none; border-left: none; border-right: none;
+  font-family: inherit;
+}
+.result-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.result-tab-body { display: none; padding: 28px; }
+.result-tab-body.active { display: block; }
+
+/* ── BRIEF DISPLAY ── */
+.brief-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 700px) { .brief-grid { grid-template-columns: 1fr; } }
+.brief-section { margin-bottom: 24px; }
+.brief-section-title {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3);
+  margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+}
+.brief-field { margin-bottom: 12px; }
+.brief-field-label { font-size: 11px; color: var(--text-3); margin-bottom: 3px; font-weight: 500; }
+.brief-field-value { font-size: 14px; color: var(--text-1); }
+
+.tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.tag {
+  background: var(--off-black); border: 1px solid var(--border);
+  border-radius: 5px; padding: 4px 10px; font-size: 12px; color: var(--text-2);
+}
+.tag.accent { background: var(--accent-bg); border-color: rgba(232,255,71,0.2); color: var(--accent); }
+
+/* ── QC DISPLAY ── */
+.qc-score-big {
+  display: flex; align-items: center; gap: 24px; margin-bottom: 28px;
+}
+.score-circle {
+  width: 90px; height: 90px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border: 3px solid; flex-shrink: 0;
+}
+.score-circle.pass { border-color: var(--green); background: rgba(71,255,138,0.06); }
+.score-circle.fail { border-color: var(--red); background: rgba(255,77,77,0.06); }
+.score-number {
+  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+}
+.score-number.pass { color: var(--green); }
+.score-number.fail { color: var(--red); }
+.score-label { font-size: 10px; color: var(--text-3); font-family: 'DM Mono', monospace; }
+.score-meta { flex: 1; }
+.score-status {
+  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700;
+  margin-bottom: 6px;
+}
+.score-desc { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+.completeness-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 20px 0; }
+.comp-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; border-radius: 7px;
+  background: var(--off-black); border: 1px solid var(--border);
+  font-size: 12px;
+}
+.comp-icon { font-size: 14px; }
+
+.issue-list, .suggestion-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.issue-item {
+  padding: 12px 16px; border-radius: 7px;
+  background: rgba(255,77,77,0.06); border: 1px solid rgba(255,77,77,0.15);
+  font-size: 13px; color: var(--text-1);
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.suggestion-item {
+  padding: 12px 16px; border-radius: 7px;
+  background: rgba(71,179,255,0.06); border: 1px solid rgba(71,179,255,0.15);
+  font-size: 13px; color: var(--text-1);
+  display: flex; align-items: flex-start; gap: 10px;
+}
+
+/* ── SCRIPT DISPLAY ── */
+.script-meta {
+  display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;
+}
+.script-badge {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border);
+  color: var(--text-2);
+}
+.scene-card {
+  border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; margin-bottom: 12px; transition: border-color 0.2s;
+}
+.scene-card:hover { border-color: var(--border-light); }
+.scene-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 18px; background: var(--off-black);
+  border-bottom: 1px solid var(--border);
+}
+.scene-num {
+  font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+  background: var(--accent-bg); color: var(--accent);
+  border: 1px solid rgba(232,255,71,0.2);
+  padding: 2px 8px; border-radius: 4px;
+}
+.scene-ts { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); }
+.scene-body { padding: 16px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .scene-body { grid-template-columns: 1fr; } }
+.scene-field-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-3); margin-bottom: 5px; font-family: 'DM Mono', monospace; }
+.scene-field-value { font-size: 13px; color: var(--text-1); line-height: 1.5; }
+.scene-field-value.empty { color: var(--text-3); font-style: italic; }
+.scene-full { grid-column: 1 / -1; }
+
+/* ── BRIEFS LIST ── */
+.briefs-list { display: flex; flex-direction: column; gap: 8px; }
+.brief-row {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px;
+  display: grid; grid-template-columns: 1fr auto auto auto auto;
+  align-items: center; gap: 16px; cursor: pointer;
+  transition: border-color 0.2s;
+}
+.brief-row:hover { border-color: var(--border-light); }
+.brief-row-name { font-size: 14px; font-weight: 500; }
+.brief-row-client { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.brief-row-platform { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); }
+.qc-badge {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  padding: 3px 8px; border-radius: 5px; font-weight: 600;
+}
+.qc-pass { background: rgba(71,255,138,0.15); color: var(--green); }
+.qc-fail { background: rgba(255,77,77,0.15); color: var(--red); }
+.has-script { background: rgba(71,179,255,0.15); color: var(--blue); font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 8px; border-radius: 5px; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px); z-index: 200;
+  display: none; align-items: flex-start; justify-content: center;
+  padding: 40px 20px; overflow-y: auto;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--off-black); border: 1px solid var(--border);
+  border-radius: 14px; width: 100%; max-width: 900px;
+  overflow: hidden; animation: slideIn 0.25s ease;
+}
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-header {
+  padding: 22px 28px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; }
+.modal-close {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 6px; padding: 6px 12px; cursor: pointer;
+  color: var(--text-2); font-size: 13px; font-family: inherit; transition: all 0.2s;
+}
+.modal-close:hover { background: var(--border); color: var(--text-1); }
+.modal-body { padding: 28px; max-height: 70vh; overflow-y: auto; }
+
+/* ── LOG TABLE ── */
+.log-table { width: 100%; border-collapse: collapse; }
+.log-table th {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-3); text-align: left; padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.log-table td {
+  font-size: 13px; padding: 12px 14px;
+  border-bottom: 1px solid var(--border); color: var(--text-1);
+}
+.log-table tr:last-child td { border-bottom: none; }
+.log-table tr:hover td { background: var(--panel); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 60px 20px;
+  color: var(--text-3);
+}
+.empty-icon { font-size: 40px; margin-bottom: 16px; }
+.empty-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text-2); margin-bottom: 8px; }
+.empty-desc { font-size: 14px; color: var(--text-3); }
+
+/* ── TOAST ── */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px;
+  display: flex; flex-direction: column; gap: 10px; z-index: 300;
+}
+.toast {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 9px; padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13px; max-width: 360px;
+  animation: toastIn 0.25s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+@keyframes toastIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.toast.success { border-color: rgba(71,255,138,0.3); }
+.toast.error { border-color: rgba(255,77,77,0.3); }
+.toast.info { border-color: rgba(71,179,255,0.3); }
+.toast-icon { font-size: 18px; flex-shrink: 0; }
+
+/* ── MISC ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+.mono { font-family: 'DM Mono', monospace; }
+.text-muted { color: var(--text-2); }
+.text-dim { color: var(--text-3); }
+.text-accent { color: var(--accent); }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.text-blue { color: var(--blue); }
+
+code {
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  background: var(--off-black); border: 1px solid var(--border);
+  padding: 2px 6px; border-radius: 4px; color: var(--accent);
+}
+
+.spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.section-badge {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 4px 10px; border-radius: 5px;
+  background: var(--panel); border: 1px solid var(--border);
+  color: var(--text-3);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .container { padding: 0 16px; }
+  nav { padding: 0 16px; }
+  .brief-row { grid-template-columns: 1fr auto; }
+  .brief-row-platform, .has-script { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <div class="nav-dot"></div>
+    Scrollhouse
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="showPage('submit')">Submit Brief</button>
+    <button class="nav-tab" onclick="showPage('briefs')">All Briefs</button>
+    <button class="nav-tab" onclick="showPage('logs')">Pipeline Logs</button>
+  </div>
+  <div class="nav-status" id="apiStatus">
+    <div class="status-dot demo"></div>
+    <span>demo mode</span>
+  </div>
+</nav>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══════════════ DASHBOARD PAGE ═══════════════ -->
+<div class="page active" id="page-dashboard">
+  <div class="container">
+    <div class="hero">
+      <div class="hero-label">Brief Pipeline · AI-Powered</div>
+      <h1 class="hero-title">From client form to<br><span>ready-to-write brief</span><br>in 90 seconds.</h1>
+      <p class="hero-sub">Transforms raw Google Form submissions into structured internal briefs + scripts using Gemini AI — replacing 25 min of manual work per brief.</p>
+    </div>
+
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-briefs">0</div>
+        <div class="stat-label">Briefs Processed</div>
+        <div class="stat-sub">this session</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-scripts">0</div>
+        <div class="stat-label">Scripts Generated</div>
+        <div class="stat-sub">auto-created</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-score">—</div>
+        <div class="stat-label">Avg QC Score</div>
+        <div class="stat-sub">quality gate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-saved">0h</div>
+        <div class="stat-label">Time Saved</div>
+        <div class="stat-sub">vs manual processing</div>
+      </div>
+    </div>
+
+    <!-- Pipeline Diagram -->
+    <div class="pipeline-viz">
+      <div class="pipeline-viz-title">How the pipeline works</div>
+      <div class="pipeline-steps">
+        <div class="pipe-step">
+          <div class="pipe-node highlight">
+            <div class="pipe-icon">📋</div>
+            <div class="pipe-label">Google Form</div>
+            <div class="pipe-sub">Client submits</div>
+            <div class="pipe-tag tag-human">client</div>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node">
+            <div class="pipe-icon">🔗</div>
+            <div class="pipe-label">Webhook Trigger</div>
+            <div class="pipe-sub">form response</div>
+            <div class="pipe-tag tag-auto">auto</div>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node ai-node">
+            <div class="pipe-icon">🤖</div>
+            <div class="pipe-label">Gemini AI</div>
+            <div class="pipe-sub">reformat + enrich</div>
+            <div class="pipe-tag tag-ai">AI</div>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node ai-node">
+            <div class="pipe-icon">✅</div>
+            <div class="pipe-label">QC Check</div>
+            <div class="pipe-sub">score + flag issues</div>
+            <div class="pipe-tag tag-ai">AI</div>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node ai-node">
+            <div class="pipe-icon">✍️</div>
+            <div class="pipe-label">Script Draft</div>
+            <div class="pipe-sub">if QC passes</div>
+            <div class="pipe-tag tag-ai">AI</div>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node">
+            <div class="pipe-icon">📄</div>
+            <div class="pipe-label">Notion / Sheet</div>
+            <div class="pipe-sub">ready for writer</div>
+            <div class="pipe-tag tag-auto">output</div>
+          </div>
+        </div>
+        <div class="pipe-arrow">→</div>
+        <div class="pipe-step">
+          <div class="pipe-node highlight">
+            <div class="pipe-icon">✉️</div>
+            <div class="pipe-label">Notify Writer</div>
+            <div class="pipe-sub">Slack / email</div>
+            <div class="pipe-tag tag-human">team</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time Math -->
+    <div class="pipeline-viz" style="margin-bottom: 32px;">
+      <div class="pipeline-viz-title">The math that made us build this</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+        <div>
+          <div style="font-size: 12px; color: var(--text-3); margin-bottom: 8px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em;">Before (manual)</div>
+          <div style="font-size: 28px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--red);">25 min</div>
+          <div style="font-size: 13px; color: var(--text-2);">per brief, per person</div>
+          <div style="font-size: 12px; color: var(--text-3); margin-top: 8px;">50 briefs/mo × 25 min = <strong style="color: var(--text-1);">20.8 hrs/mo</strong></div>
+        </div>
+        <div>
+          <div style="font-size: 12px; color: var(--text-3); margin-bottom: 8px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em;">After (pipeline)</div>
+          <div style="font-size: 28px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--green);">~90 sec</div>
+          <div style="font-size: 13px; color: var(--text-2);">per brief, zero effort</div>
+          <div style="font-size: 12px; color: var(--text-3); margin-top: 8px;">50 briefs/mo × 1.5 min = <strong style="color: var(--text-1);">1.25 hrs/mo</strong></div>
+        </div>
+        <div>
+          <div style="font-size: 12px; color: var(--text-3); margin-bottom: 8px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em;">Net saving</div>
+          <div style="font-size: 28px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--accent);">19.5 hrs</div>
+          <div style="font-size: 13px; color: var(--text-2);">freed per month</div>
+          <div style="font-size: 12px; color: var(--text-3); margin-top: 8px;">≈ 2.4 full work days back</div>
+        </div>
+        <div>
+          <div style="font-size: 12px; color: var(--text-3); margin-bottom: 8px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em;">Quality boost</div>
+          <div style="font-size: 28px; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--blue);">100%</div>
+          <div style="font-size: 13px; color: var(--text-2);">briefs QC-checked</div>
+          <div style="font-size: 12px; color: var(--text-3); margin-top: 8px;">0 briefs slipped through before</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; padding-bottom: 40px; flex-wrap: wrap;">
+      <button class="btn btn-primary" onclick="showPage('submit')">
+        ➕ Submit New Brief
+      </button>
+      <button class="btn btn-ghost" onclick="seedDemo()" id="seedBtn">
+        🌱 Load Demo Data
+      </button>
+      <button class="btn btn-ghost" onclick="loadStats()">
+        ↻ Refresh Stats
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SUBMIT PAGE ═══════════════ -->
+<div class="page" id="page-submit">
+  <div class="container" style="padding-top: 40px; padding-bottom: 60px;">
+
+    <div style="margin-bottom: 28px;">
+      <div class="hero-label">New Brief Submission</div>
+      <h2 style="font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 8px;">Submit Client Brief</h2>
+      <p style="color: var(--text-2); font-size: 14px;">This simulates a Google Form submission. In production, form data flows in automatically via webhook.</p>
+    </div>
+
+    <div class="form-wrap">
+      <div class="form-header">
+        <div>
+          <div class="form-header-title">Client Brief Form</div>
+          <div class="form-header-sub">Scrollhouse × Content Pipeline</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="fillDemoForm()">⚡ Fill Demo</button>
+      </div>
+      <div class="form-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>Brand Name *</label>
+            <input type="text" id="brand_name" placeholder="e.g. FitCore Athletics">
+          </div>
+          <div class="field">
+            <label>Industry *</label>
+            <input type="text" id="industry" placeholder="e.g. Sports & Fitness">
+          </div>
+          <div class="field form-full">
+            <label>Campaign Goal *</label>
+            <input type="text" id="campaign_goal" placeholder="e.g. Launch new summer activewear collection and drive online sales">
+          </div>
+          <div class="field">
+            <label>Target Audience *</label>
+            <textarea id="target_audience" placeholder="Age range, interests, demographics..."></textarea>
+          </div>
+          <div class="field">
+            <label>Platforms *</label>
+            <input type="text" id="platforms" placeholder="e.g. Instagram Reels, TikTok">
+          </div>
+          <div class="field">
+            <label>Tone / Vibe</label>
+            <select id="tone">
+              <option value="">Select tone...</option>
+              <option>Energetic & Aspirational</option>
+              <option>Cool & Minimal</option>
+              <option>Educational & Trustworthy</option>
+              <option>Playful & Fun</option>
+              <option>Premium & Sophisticated</option>
+              <option>Raw & Authentic</option>
+              <option>Witty & Humorous</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Budget Tier</label>
+            <select id="budget_tier">
+              <option value="">Select...</option>
+              <option>Low (under ₹50k)</option>
+              <option>Mid (₹50k–₹2L)</option>
+              <option>High (₹2L+)</option>
+            </select>
+          </div>
+          <div class="field form-full">
+            <label>Key Message *</label>
+            <textarea id="key_message" placeholder="What is the single most important thing viewers should take away?"></textarea>
+          </div>
+          <div class="field">
+            <label>Products / Services</label>
+            <textarea id="products" placeholder="Describe what's being showcased..."></textarea>
+          </div>
+          <div class="field">
+            <label>Call to Action</label>
+            <input type="text" id="cta" placeholder="e.g. Shop now — link in bio">
+          </div>
+          <div class="field">
+            <label>Reference Examples</label>
+            <textarea id="references" placeholder="Links, brand names, or descriptions of content you like..."></textarea>
+          </div>
+          <div class="field">
+            <label>Deadline</label>
+            <input type="text" id="deadline" placeholder="e.g. 15 June 2025">
+          </div>
+          <div class="field form-full">
+            <label>Additional Notes</label>
+            <textarea id="additional_notes" placeholder="Anything else the team should know..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="form-footer">
+        <span class="form-footer-hint">* Required fields · Pipeline runs automatically on submit</span>
+        <button class="btn btn-primary" onclick="submitBrief()" id="submitBtn">
+          <span id="submitBtnText">Run Pipeline →</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="pipeline-progress" id="pipelineProgress">
+      <div class="progress-title">⚙️ Pipeline Running...</div>
+      <div class="progress-steps" id="progressSteps">
+        <div class="progress-step" id="pstep-transform">
+          <div class="step-icon">📊</div>
+          <div class="step-text">
+            <div class="step-name">Transform Brief</div>
+            <div class="step-desc">Gemini AI reformats raw form into structured internal brief</div>
+          </div>
+          <div class="step-badge" id="badge-transform">waiting</div>
+        </div>
+        <div class="progress-step" id="pstep-qc">
+          <div class="step-icon">🔍</div>
+          <div class="step-text">
+            <div class="step-name">Quality Check</div>
+            <div class="step-desc">Score completeness, flag missing info, identify blockers</div>
+          </div>
+          <div class="step-badge" id="badge-qc">waiting</div>
+        </div>
+        <div class="progress-step" id="pstep-script">
+          <div class="step-icon">✍️</div>
+          <div class="step-text">
+            <div class="step-name">Generate Script</div>
+            <div class="step-desc">AI writes first-draft script ready for scriptwriter review</div>
+          </div>
+          <div class="step-badge" id="badge-script">waiting</div>
+        </div>
+        <div class="progress-step" id="pstep-notify">
+          <div class="step-icon">📬</div>
+          <div class="step-text">
+            <div class="step-name">Notify Scriptwriter</div>
+            <div class="step-desc">Slack message + Notion page created (mocked in demo)</div>
+          </div>
+          <div class="step-badge" id="badge-notify">waiting</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="result-panel" id="resultPanel">
+      <div class="result-tabs">
+        <button class="result-tab active" onclick="showResultTab('internal-brief')">📋 Internal Brief</button>
+        <button class="result-tab" onclick="showResultTab('qc')">✅ QC Report</button>
+        <button class="result-tab" onclick="showResultTab('script')">✍️ Script</button>
+        <button class="result-tab" onclick="showResultTab('raw')">{ } Raw JSON</button>
+      </div>
+
+      <!-- Internal Brief Tab -->
+      <div class="result-tab-body active" id="tab-internal-brief">
+        <div id="briefContent"></div>
+      </div>
+
+      <!-- QC Tab -->
+      <div class="result-tab-body" id="tab-qc">
+        <div id="qcContent"></div>
+      </div>
+
+      <!-- Script Tab -->
+      <div class="result-tab-body" id="tab-script">
+        <div id="scriptContent"></div>
+      </div>
+
+      <!-- Raw JSON Tab -->
+      <div class="result-tab-body" id="tab-raw">
+        <pre id="rawJson" style="font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-2); white-space: pre-wrap; word-break: break-word; line-height: 1.6;"></pre>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════ BRIEFS PAGE ═══════════════ -->
+<div class="page" id="page-briefs">
+  <div class="container" style="padding-top: 40px; padding-bottom: 60px;">
+    <div class="section-header">
+      <div>
+        <div class="hero-label">Brief Library</div>
+        <h2 style="font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800;">All Processed Briefs</h2>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <span class="section-count" id="briefsCount">Loading...</span>
+        <button class="btn btn-ghost btn-sm" onclick="loadBriefs()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div id="briefsList">
+      <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No briefs yet</div>
+        <div class="empty-desc">Submit a brief or load demo data to get started</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ LOGS PAGE ═══════════════ -->
+<div class="page" id="page-logs">
+  <div class="container" style="padding-top: 40px; padding-bottom: 60px;">
+    <div class="section-header">
+      <div>
+        <div class="hero-label">Audit Trail</div>
+        <h2 style="font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800;">Pipeline Logs</h2>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="loadLogs()">↻ Refresh</button>
+    </div>
+
+    <div id="logsContent">
+      <div class="empty-state">
+        <div class="empty-icon">📜</div>
+        <div class="empty-title">No logs yet</div>
+        <div class="empty-desc">Pipeline activity will appear here</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ MODAL ═══════════════ -->
+<div class="modal-overlay" id="briefModal" onclick="closeBriefModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Brief Details</div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button class="btn btn-ghost btn-sm" id="modalRegenBtn" onclick="regenScript()">↻ Regen Script</button>
+        <button class="modal-close" onclick="closeModal()">Close ✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const API = '';  // Same origin
+
+// ── NAVIGATION ──
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  
+  const tabs = document.querySelectorAll('.nav-tab');
+  const map = { dashboard: 0, submit: 1, briefs: 2, logs: 3 };
+  if (map[name] !== undefined) tabs[map[name]].classList.add('active');
+  
+  if (name === 'briefs') loadBriefs();
+  if (name === 'logs') loadLogs();
+  if (name === 'dashboard') loadStats();
+}
+
+// ── TOAST ──
+function toast(msg, type = 'info') {
+  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span class="toast-icon">${icons[type]}</span><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 3800);
+}
+
+// ── STATS ──
+async function loadStats() {
+  try {
+    const r = await fetch(API + '/api/stats');
+    const d = await r.json();
+    document.getElementById('stat-briefs').textContent = d.total_briefs;
+    document.getElementById('stat-scripts').textContent = d.total_scripts;
+    document.getElementById('stat-score').textContent = d.avg_qc_score || '—';
+    document.getElementById('stat-saved').textContent = d.time_saved_hours + 'h';
+    
+    const status = document.getElementById('apiStatus');
+    status.innerHTML = d.api_key_set
+      ? '<div class="status-dot live"></div><span>gemini live</span>'
+      : '<div class="status-dot demo"></div><span>demo mode</span>';
+  } catch(e) { /* server not running */ }
+}
+
+// ── DEMO FORM FILL ──
+function fillDemoForm() {
+  const demos = [
+    {
+      brand_name: 'FitCore Athletics', industry: 'Sports & Fitness',
+      campaign_goal: 'Launch summer activewear collection and drive online sales',
+      target_audience: 'Health-conscious millennials aged 24-35, gym-goers',
+      platforms: 'Instagram Reels, TikTok', tone: 'Energetic & Aspirational',
+      budget_tier: 'Mid (₹50k–₹2L)',
+      key_message: 'Performance meets style — engineered for summer',
+      products: 'HydraTech activewear line: leggings, sports bras, shorts. 12 colorways.',
+      cta: 'Shop the drop — link in bio', references: 'Nike summer campaigns, Gymshark',
+      deadline: '12 June 2025', additional_notes: 'Prefer diverse talent, natural lighting only'
+    },
+    {
+      brand_name: 'Brewlab Coffee', industry: 'Food & Beverage',
+      campaign_goal: 'Brand awareness for new cold brew range',
+      target_audience: 'Urban professionals and coffee enthusiasts 22-40',
+      platforms: 'Instagram Reels', tone: 'Cool & Minimal',
+      budget_tier: 'Low (under ₹50k)',
+      key_message: "Cold brew that doesn't compromise on taste or quality",
+      products: 'Original Cold Brew, Vanilla Nitro, Oat Milk Cold Brew cans',
+      cta: 'Find us at your nearest café', references: 'Blue Bottle aesthetic, minimal product-led',
+      deadline: '20 June 2025', additional_notes: 'No stock footage. All original shoots.'
+    }
+  ];
+  const d = demos[Math.floor(Math.random() * demos.length)];
+  Object.keys(d).forEach(k => {
+    const el = document.getElementById(k);
+    if (el) el.value = d[k];
+  });
+  toast('Demo form filled ⚡', 'success');
+}
+
+// ── SUBMIT BRIEF ──
+async function submitBrief() {
+  const required = ['brand_name', 'campaign_goal', 'target_audience', 'platforms', 'key_message'];
+  for (const f of required) {
+    if (!document.getElementById(f).value.trim()) {
+      toast(`Please fill in: ${f.replace('_', ' ')}`, 'error');
+      document.getElementById(f).focus();
+      return;
+    }
+  }
+
+  const payload = {};
+  ['brand_name','industry','campaign_goal','target_audience','platforms','tone','budget_tier',
+   'key_message','products','cta','references','deadline','additional_notes'].forEach(k => {
+    payload[k] = document.getElementById(k).value.trim();
+  });
+
+  const btn = document.getElementById('submitBtn');
+  const btnText = document.getElementById('submitBtnText');
+  btn.disabled = true;
+  btnText.innerHTML = '<span class="spinner"></span> Processing...';
+
+  // Show progress
+  const progress = document.getElementById('pipelineProgress');
+  progress.classList.add('active');
+  document.getElementById('resultPanel').classList.remove('active');
+
+  // Animate steps
+  animateStep('transform', 'running', 600);
+  animateStep('qc', 'running', 2200);
+  animateStep('script', 'running', 3800);
+  animateStep('notify', 'running', 5400);
+
+  try {
+    const r = await fetch(API + '/api/submit-brief', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await r.json();
+
+    if (!data.success) throw new Error(data.error);
+
+    // Mark steps done
+    ['transform','qc','script','notify'].forEach((s,i) => {
+      setTimeout(() => animateStep(s, 'done'), 600 + i*800);
+    });
+    if (!data.data.script) animateStep('script', 'error', 4200);
+
+    setTimeout(() => {
+      renderResults(data.data);
+      document.getElementById('resultPanel').classList.add('active');
+      document.getElementById('resultPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toast(`Brief processed! ID: ${data.brief_id}`, 'success');
+      loadStats();
+    }, 7000);
+
+  } catch(e) {
+    ['transform','qc','script','notify'].forEach(s => setBadge(s, 'error'));
+    toast('Pipeline error: ' + e.message, 'error');
+  } finally {
+    setTimeout(() => {
+      btn.disabled = false;
+      btnText.textContent = 'Run Pipeline →';
+    }, 7200);
+  }
+}
+
+function animateStep(step, status, delay = 0) {
+  setTimeout(() => setBadge(step, status), delay);
+}
+
+function setBadge(step, status) {
+  const el = document.getElementById('pstep-' + step);
+  const badge = document.getElementById('badge-' + step);
+  if (!el || !badge) return;
+  el.className = 'progress-step ' + (status === 'running' ? 'active' : status === 'done' ? 'done' : 'error');
+  badge.className = 'step-badge ' + status;
+  badge.textContent = status === 'running' ? '⚙ running' : status === 'done' ? '✓ done' : '✗ error';
+}
+
+// ── RENDER RESULTS ──
+let lastResult = null;
+
+function renderResults(data) {
+  lastResult = data;
+  renderBriefTab(data.internal_brief);
+  renderQCTab(data.qc);
+  renderScriptTab(data.script);
+  document.getElementById('rawJson').textContent = JSON.stringify(data, null, 2);
+}
+
+function renderBriefTab(brief) {
+  if (!brief || brief.error) {
+    document.getElementById('briefContent').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Brief transformation failed</div><div class="empty-desc">${brief?.error || 'Unknown error'}</div></div>`;
+    return;
+  }
+
+  const dl = arr => arr && arr.length ? arr.map(i => `<div class="tag">${i}</div>`).join('') : '<span class="text-dim">—</span>';
+  const hooks = brief.hooks_suggested ? brief.hooks_suggested.map((h,i) => `<div style="padding:10px 14px;background:var(--off-black);border:1px solid var(--border);border-radius:7px;font-size:13px;margin-bottom:6px;"><span style="color:var(--text-3);font-family:'DM Mono',monospace;font-size:10px;margin-right:8px;">${i+1}</span>"${h}"</div>`).join('') : '';
+
+  document.getElementById('briefContent').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <div>
+        <h3 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:4px;">${brief.brief_title || 'Untitled Brief'}</h3>
+        <div style="font-size:13px;color:var(--text-2);">Client: <strong>${brief.client_name || '—'}</strong> · Platform: <strong>${brief.platform || '—'}</strong> · Deadline: <strong>${brief.deadline || '—'}</strong></div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-3);">ID: ${brief.brief_id || '—'}</div>
+    </div>
+
+    <div class="brief-grid">
+      <div>
+        <div class="brief-section">
+          <div class="brief-section-title">Core Brief</div>
+          <div class="brief-field"><div class="brief-field-label">Target Audience</div><div class="brief-field-value">${brief.target_audience || '—'}</div></div>
+          <div class="brief-field"><div class="brief-field-label">Core Message</div><div class="brief-field-value">${brief.core_message || '—'}</div></div>
+          <div class="brief-field"><div class="brief-field-label">Tone of Voice</div><div class="brief-field-value">${brief.tone_of_voice || '—'}</div></div>
+          <div class="brief-field"><div class="brief-field-label">CTA</div><div class="brief-field-value text-accent">${brief.cta || '—'}</div></div>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-title">Deliverables</div>
+          <div class="tag-list">${dl(brief.deliverables)}</div>
+        </div>
+      </div>
+      <div>
+        <div class="brief-section">
+          <div class="brief-section-title">Key Talking Points</div>
+          <div class="tag-list">${dl(brief.key_talking_points)}</div>
+        </div>
+        <div class="brief-section">
+          <div class="brief-section-title">Notes</div>
+          <div style="font-size:13px;color:var(--text-2);">${brief.notes || '—'}</div>
+        </div>
+      </div>
+    </div>
+
+    ${hooks ? `<div class="brief-section"><div class="brief-section-title">AI-Suggested Hooks</div>${hooks}</div>` : ''}
+
+    ${brief.qc ? `<div style="padding:12px 16px;background:rgba(71,179,255,0.06);border:1px solid rgba(71,179,255,0.2);border-radius:8px;font-size:13px;color:var(--text-2);">
+      <span style="color:var(--blue);font-weight:600;">QC Score: ${brief.qc.score}/100</span> · ${brief.qc.passed ? '<span style="color:var(--green);">✓ Passed</span>' : '<span style="color:var(--red);">✗ Failed — see QC tab</span>'}
+    </div>` : ''}
+  `;
+}
+
+function renderQCTab(qc) {
+  if (!qc) {
+    document.getElementById('qcContent').innerHTML = '<div class="empty-state"><div class="empty-icon">—</div><div class="empty-title">No QC data</div></div>';
+    return;
+  }
+
+  const pass = qc.passed;
+  const comp = qc.completeness || {};
+  const compItems = Object.entries(comp).map(([k,v]) => `
+    <div class="comp-item">
+      <span class="comp-icon">${v ? '✅' : '❌'}</span>
+      <span style="font-size:12px;color:${v ? 'var(--text-1)':'var(--text-3)'};">${k.replace(/_/g,' ')}</span>
+    </div>
+  `).join('');
+
+  const issues = (qc.issues||[]).map(i => `<li class="issue-item"><span>⚠️</span><span>${i}</span></li>`).join('');
+  const suggs = (qc.suggestions||[]).map(s => `<li class="suggestion-item"><span>💡</span><span>${s}</span></li>`).join('');
+
+  document.getElementById('qcContent').innerHTML = `
+    <div class="qc-score-big">
+      <div class="score-circle ${pass ? 'pass' : 'fail'}">
+        <div class="score-number ${pass ? 'pass' : 'fail'}">${qc.score}</div>
+        <div class="score-label">/ 100</div>
+      </div>
+      <div class="score-meta">
+        <div class="score-status">${pass ? '✅ Passed Quality Gate' : '❌ Needs Revision'}</div>
+        <div class="score-desc">${pass ? 'Brief is complete enough for scriptwriting. Script has been auto-generated.' : 'Brief has missing or unclear information. Please review issues below before sending to scriptwriter.'}</div>
+      </div>
+    </div>
+    ${compItems ? `<div class="brief-section-title" style="margin-bottom:8px;">Completeness Check</div><div class="completeness-grid">${compItems}</div>` : ''}
+    ${issues ? `<div style="margin-top:20px;"><div class="brief-section-title" style="margin-bottom:10px;">Issues (blockers)</div><ul class="issue-list">${issues}</ul></div>` : ''}
+    ${suggs ? `<div style="margin-top:20px;"><div class="brief-section-title" style="margin-bottom:10px;">AI Suggestions</div><ul class="suggestion-list">${suggs}</ul></div>` : ''}
+  `;
+}
+
+function renderScriptTab(script) {
+  if (!script || script.error) {
+    document.getElementById('scriptContent').innerHTML = `<div class="empty-state"><div class="empty-icon">✍️</div><div class="empty-title">No script generated</div><div class="empty-desc">Script is only generated when QC passes (score ≥ 75). Fix the brief issues in the QC tab first.</div></div>`;
+    return;
+  }
+
+  const scenes = (script.scenes||[]).map(s => `
+    <div class="scene-card">
+      <div class="scene-header">
+        <span class="scene-num">Scene ${s.scene}</span>
+        <span class="scene-ts">${s.timestamp || ''}</span>
+      </div>
+      <div class="scene-body">
+        <div>
+          <div class="scene-field-label">🎬 Visual</div>
+          <div class="scene-field-value ${!s.visual ? 'empty' : ''}">${s.visual || '—'}</div>
+        </div>
+        <div>
+          <div class="scene-field-label">🎙 Voiceover</div>
+          <div class="scene-field-value ${!s.voiceover ? 'empty' : ''}">${s.voiceover || '(silent)'}</div>
+        </div>
+        ${s.on_screen_text ? `<div><div class="scene-field-label">📺 On-Screen Text</div><div class="scene-field-value">${s.on_screen_text}</div></div>` : ''}
+        ${s.sound ? `<div><div class="scene-field-label">🎵 Sound</div><div class="scene-field-value text-muted">${s.sound}</div></div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('scriptContent').innerHTML = `
+    <div style="margin-bottom:20px;">
+      <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:12px;">${script.script_title || 'Untitled Script'}</h3>
+      <div class="script-meta">
+        <span class="script-badge">📱 ${script.platform || '—'}</span>
+        <span class="script-badge">⏱ ${script.duration || '—'}</span>
+        ${script.word_count ? `<span class="script-badge">📝 ${script.word_count} words</span>` : ''}
+        ${script.estimated_read_time ? `<span class="script-badge">🕐 ${script.estimated_read_time}</span>` : ''}
+      </div>
+    </div>
+    ${scenes}
+    ${script.scriptwriter_notes ? `
+      <div style="margin-top:20px;padding:16px;background:rgba(71,179,255,0.06);border:1px solid rgba(71,179,255,0.15);border-radius:8px;">
+        <div class="brief-section-title" style="margin-bottom:8px;">📌 Notes for Scriptwriter</div>
+        <p style="font-size:13px;color:var(--text-2);">${script.scriptwriter_notes}</p>
+      </div>` : ''}
+  `;
+}
+
+// ── RESULT TABS ──
+function showResultTab(name) {
+  document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.result-tab-body').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  const tabs = document.querySelectorAll('.result-tab');
+  const map = {'internal-brief':0, 'qc':1, 'script':2, 'raw':3};
+  if (map[name] !== undefined) tabs[map[name]].classList.add('active');
+}
+
+// ── BRIEFS LIST ──
+async function loadBriefs() {
+  const container = document.getElementById('briefsList');
+  container.innerHTML = '<div class="empty-state"><div class="spinner" style="margin:0 auto 16px;"></div><div class="empty-title">Loading...</div></div>';
+  
+  try {
+    const r = await fetch(API + '/api/briefs');
+    const d = await r.json();
+    document.getElementById('briefsCount').textContent = `${d.total} briefs`;
+
+    if (!d.briefs.length) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">No briefs yet</div><div class="empty-desc">Submit a brief or load demo data</div></div>`;
+      return;
+    }
+
+    container.innerHTML = `<div class="briefs-list">${d.briefs.map(b => `
+      <div class="brief-row" onclick="openBriefModal('${b.brief_id}')">
+        <div>
+          <div class="brief-row-name">${b.brief_title || 'Untitled'}</div>
+          <div class="brief-row-client">${b.client_name || '—'} · ${b.created_at ? new Date(b.created_at).toLocaleDateString() : ''}</div>
+        </div>
+        <div class="brief-row-platform mono text-dim">${b.platform || '—'}</div>
+        <div>
+          <span class="qc-badge ${b.qc_passed ? 'qc-pass' : 'qc-fail'}">${b.qc_score}/100</span>
+        </div>
+        ${b.has_script ? '<div><span class="has-script">script ready</span></div>' : '<div></div>'}
+        <div>
+          <span class="btn btn-ghost btn-sm">View →</span>
+        </div>
+      </div>
+    `).join('')}</div>`;
+  } catch(e) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Connection error</div><div class="empty-desc">Make sure the Flask server is running</div></div>`;
+  }
+}
+
+// ── BRIEF MODAL ──
+let currentModalBriefId = null;
+
+async function openBriefModal(briefId) {
+  currentModalBriefId = briefId;
+  const modal = document.getElementById('briefModal');
+  const body = document.getElementById('modalBody');
+  modal.classList.add('active');
+  body.innerHTML = '<div style="text-align:center;padding:40px;"><div class="spinner" style="margin:0 auto;"></div></div>';
+
+  try {
+    const [briefR, scriptR] = await Promise.all([
+      fetch(API + '/api/briefs/' + briefId),
+      fetch(API + '/api/scripts/' + briefId)
+    ]);
+    const brief = await briefR.json();
+    const scriptData = scriptR.ok ? await scriptR.json() : null;
+
+    document.getElementById('modalTitle').textContent = brief.brief_title || 'Brief Details';
+
+    let html = `<div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="script-badge">🏷 ${brief.client_name || '—'}</span>
+      <span class="script-badge">📱 ${brief.platform || '—'}</span>
+      <span class="script-badge">📅 ${brief.deadline || '—'}</span>
+    </div>`;
+
+    // Brief summary
+    renderBriefTab(brief);
+    renderQCTab(brief.qc);
+    if (scriptData) renderScriptTab(scriptData);
+
+    body.innerHTML = `
+      <div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="script-badge">🏷 ${brief.client_name || '—'}</span>
+        <span class="script-badge">📱 ${brief.platform || '—'}</span>
+        <span class="script-badge">📅 ${brief.deadline || '—'}</span>
+        <span class="qc-badge ${brief.qc?.passed ? 'qc-pass' : 'qc-fail'}" style="font-size:12px;padding:4px 10px;">QC: ${brief.qc?.score || 0}/100</span>
+      </div>
+      <div id="modalBriefContent"></div>
+      <hr class="divider">
+      <h4 style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;">QC Report</h4>
+      <div id="modalQcContent"></div>
+      ${scriptData ? `<hr class="divider"><h4 style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;">Generated Script</h4><div id="modalScriptContent"></div>` : ''}
+    `;
+
+    // Render into modal sections
+    const briefEl = document.getElementById('modalBriefContent');
+    const qcEl = document.getElementById('modalQcContent');
+    const tempBrief = document.getElementById('briefContent').innerHTML;
+    const tempQc = document.getElementById('qcContent').innerHTML;
+    briefEl.innerHTML = tempBrief;
+    qcEl.innerHTML = tempQc;
+    if (scriptData) {
+      document.getElementById('modalScriptContent').innerHTML = document.getElementById('scriptContent').innerHTML;
+    }
+
+  } catch(e) {
+    body.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error loading brief</div><div class="empty-desc">${e.message}</div></div>`;
+  }
+}
+
+function closeModal() {
+  document.getElementById('briefModal').classList.remove('active');
+}
+
+function closeBriefModal(e) {
+  if (e.target === document.getElementById('briefModal')) closeModal();
+}
+
+async function regenScript() {
+  if (!currentModalBriefId) return;
+  toast('Regenerating script...', 'info');
+  try {
+    const r = await fetch(API + '/api/regenerate-script/' + currentModalBriefId, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({}) });
+    const d = await r.json();
+    if (d.success) {
+      toast('Script regenerated!', 'success');
+      openBriefModal(currentModalBriefId);
+    }
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
+// ── LOGS ──
+async function loadLogs() {
+  const container = document.getElementById('logsContent');
+  try {
+    const r = await fetch(API + '/api/pipeline-log');
+    const d = await r.json();
+    
+    if (!d.log.length) {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">📜</div><div class="empty-title">No pipeline activity yet</div><div class="empty-desc">Submit a brief to see logs</div></div>`;
+      return;
+    }
+
+    const rows = d.log.reverse().map(l => `
+      <tr>
+        <td><code>${l.brief_id}</code></td>
+        <td><span style="font-size:12px;color:var(--text-2);">${l.started_at ? new Date(l.started_at).toLocaleString() : '—'}</span></td>
+        <td>${l.steps?.length || 0} steps</td>
+        <td><span class="qc-badge ${l.outcome === 'script_generated' ? 'qc-pass' : 'qc-fail'}">${l.outcome || '—'}</span></td>
+        <td><span style="font-size:12px;color:var(--text-3);">${l.steps?.filter(s=>s.status==='done').length || 0}/${l.steps?.length || 0} done</span></td>
+      </tr>
+    `).join('');
+
+    container.innerHTML = `
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+        <table class="log-table">
+          <thead><tr><th>Brief ID</th><th>Started</th><th>Steps</th><th>Outcome</th><th>Progress</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
+  } catch(e) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Connection error</div></div>`;
+  }
+}
+
+// ── SEED DEMO ──
+async function seedDemo() {
+  const btn = document.getElementById('seedBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Seeding...';
+  toast('Loading 3 demo briefs through pipeline...', 'info');
+  
+  try {
+    const r = await fetch(API + '/api/seed-demo', { method: 'POST' });
+    const d = await r.json();
+    if (d.success) {
+      toast(`${d.count} demo briefs created!`, 'success');
+      loadStats();
+    }
+  } catch(e) {
+    toast('Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🌱 Load Demo Data';
+  }
+}
+
+// ── INIT ──
+loadStats();
+</script>
+</body>
+</html>
